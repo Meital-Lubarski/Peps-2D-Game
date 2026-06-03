@@ -11,10 +11,15 @@ import pepse.world.Sky;
 import pepse.world.Terrain;
 import java.util.List;
 
+import pepse.world.daynight.Night;
+
 public class PepseGameManager extends GameManager {
     // Constant initialization configurations
     private static final int INIT_SEED = 1000; // for us to play (changes ground)
     private static final int START_X = 0;
+    private static final float DAY_CYCLE = 30f;
+
+
     @Override
     public void initializeGame(ImageReader imageReader,
                                SoundReader soundReader,
@@ -26,6 +31,7 @@ public class PepseGameManager extends GameManager {
 
         createSky(windowDimensions); // create sky
         createTerrain(windowDimensions); // create gound
+        createNight(windowDimensions);
 
 
     }
@@ -44,6 +50,14 @@ public class PepseGameManager extends GameManager {
         for (Block block: blocksList) {
             gameObjects().addGameObject(block, Layer.STATIC_OBJECTS);
         }
+    }
+
+    /** Creates the night darkness and adds it to the foreground layer */
+    private void createNight(Vector2 windowDimensions) {
+        GameObject nightOverlay = Night.create(windowDimensions, DAY_CYCLE);
+        // we chose FOREGROUND bec it will also affect the ground and avatar
+        int nightLayer = Layer.FOREGROUND;
+        gameObjects().addGameObject(nightOverlay, nightLayer);
     }
 
 
