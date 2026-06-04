@@ -13,6 +13,7 @@ import java.util.List;
 import pepse.world.daynight.Sun;
 import pepse.world.daynight.SunHalo;
 
+import pepse.world.avatar.Avatar;
 import pepse.world.daynight.Night;
 
 public class PepseGameManager extends GameManager {
@@ -33,18 +34,12 @@ public class PepseGameManager extends GameManager {
 
         createSky(windowDimensions); // create sky
         createTerrain(windowDimensions); // create gound
-        createSunAndHalo(windowDimensions);
         createNight(windowDimensions);
 
-    }
+        // TODO test avatar
+        //  starting position
 
-    private void createSunAndHalo(Vector2 windowDimensions){
-        GameObject sun = Sun.create(windowDimensions, DAY_CYCLE);
-        GameObject sunHalo = SunHalo.create(sun);
-        gameObjects().addGameObject(sunHalo, Layer.BACKGROUND + 1);
-        gameObjects().addGameObject(sun, Layer.BACKGROUND + 2);
     }
-
     /** creates the sky object and adds it to the back layer  */
     private void createSky(Vector2 windowDimensions) {
         GameObject sky = Sky.create(windowDimensions);
