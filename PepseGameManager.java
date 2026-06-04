@@ -38,7 +38,7 @@ public class PepseGameManager extends GameManager {
         createNight(windowDimensions);
     }
 
-
+    // Comment to test pushing in git
     private void createSunAndHalo(Vector2 windowDimensions){
         GameObject sun = Sun.create(windowDimensions, DAY_CYCLE);
         GameObject sunHalo = SunHalo.create(sun);
