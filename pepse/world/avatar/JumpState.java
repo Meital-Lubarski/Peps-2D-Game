@@ -9,6 +9,9 @@ public class JumpState implements State{
 
     }
 
+    /** executes the rules of the jump state
+     * @param avatar The avatar instance
+     * @param deltaTime The time since the last frame update */
     @Override
     public void stateRules(Avatar avatar, float deltaTime) {
 
