@@ -11,6 +11,7 @@ import pepse.world.Sky;
 import pepse.world.Terrain;
 import java.util.List;
 
+import pepse.world.avatar.Avatar;
 import pepse.world.daynight.Night;
 
 public class PepseGameManager extends GameManager {
@@ -32,6 +33,13 @@ public class PepseGameManager extends GameManager {
         createSky(windowDimensions); // create sky
         createTerrain(windowDimensions); // create gound
         createNight(windowDimensions);
+
+        // TODO test avatar
+        //  starting position
+        Vector2 avatarStartingPos = new Vector2(windowDimensions.x() / 2f, 100f);
+        Avatar avatar = new Avatar(avatarStartingPos, inputListener, imageReader);
+        gameObjects().addGameObject(avatar, Layer.DEFAULT);
+
 
 
     }
