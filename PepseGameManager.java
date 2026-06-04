@@ -13,6 +13,7 @@ import java.util.List;
 import pepse.world.daynight.Sun;
 import pepse.world.daynight.SunHalo;
 
+import pepse.world.avatar.Avatar;
 import pepse.world.daynight.Night;
 
 public class PepseGameManager extends GameManager {
@@ -36,7 +37,7 @@ public class PepseGameManager extends GameManager {
         createSunAndHalo(windowDimensions);
         createNight(windowDimensions);
 
-    }
+
 
     private void createSunAndHalo(Vector2 windowDimensions){
         GameObject sun = Sun.create(windowDimensions, DAY_CYCLE);
