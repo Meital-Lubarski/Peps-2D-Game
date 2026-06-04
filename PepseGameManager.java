@@ -36,7 +36,7 @@ public class PepseGameManager extends GameManager {
         createTerrain(windowDimensions); // create gound
         createSunAndHalo(windowDimensions);
         createNight(windowDimensions);
-
+    }
 
 
     private void createSunAndHalo(Vector2 windowDimensions){
