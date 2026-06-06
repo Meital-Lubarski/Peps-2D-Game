@@ -3,6 +3,7 @@ package pepse.world.avatar;
 import danogl.GameObject;
 import danogl.gui.ImageReader;
 import danogl.gui.UserInputListener;
+import danogl.gui.rendering.AnimationRenderable;
 import danogl.util.Vector2;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,13 +23,37 @@ public class Avatar extends GameObject {
     private float energy = 100.0f;
 
     private final List<EnergyObserver> observers = new ArrayList<>();
+    private static final double TIME_BETWEEN_CLIPS = 0.1;
+    //states
     private State currentState;
+    public static State IDLE_STATE;
+    public static State RUN_STATE;
+    public static State JUMP_STATE;
 
     /** Constructor for Avatar entity. */
     public Avatar(Vector2 topLeftCorner, UserInputListener inputListener, ImageReader imageReader) {
-        super(topLeftCorner, AVATAR_SIZE, imageReader.readImage("assets\\idle_0.png", true));
+        super(topLeftCorner, AVATAR_SIZE, imageReader.readImage("assets/idle_0.png", true));
         this.inputListener = inputListener;
-        // TODO IMPLIMENT current state in start is IDLE STATE
+
+        AnimationRenderable idlePics = new AnimationRenderable(
+                new String[]{"assets/idle_0.png", "assets/idle_1.png",
+                        "assets/idle_2.png", "assets/idle_3.png"},
+                imageReader, true, TIME_BETWEEN_CLIPS);
+        AnimationRenderable runPics = new AnimationRenderable(
+                new String[]{"assets/run_0.png", "assets/run_1.png", "assets/run_2.png",
+                        "assets/run_3.png", "assets/run_4.png", "assets/run_5.png"},
+                imageReader, true, TIME_BETWEEN_CLIPS);
+        AnimationRenderable jumpPics = new AnimationRenderable(
+                new String[]{"assets/jump_0.png", "assets/jump_1.png",
+                        "assets/jump_2.png", "assets/jump_3.png"},
+                imageReader, true, TIME_BETWEEN_CLIPS);
+
+
+        IDLE_STATE = new IdleState(idlePics);
+        RUN_STATE = new RunState(runPics);
+        JUMP_STATE = new JumpState(jumpPics);
+
+        this.currentState = IDLE_STATE;
 
         // code from platformer:
         physics().preventIntersectionsFromDirection(Vector2.ZERO); // takes avatar down
@@ -64,6 +89,8 @@ public class Avatar extends GameObject {
 
     @Override
     public void update(float deltaTime) {
-        // TODO IMPLIMENT THIS!
+        super.update(deltaTime);
+        currentState.handle(this, inputListener);
+        currentState.stateRules(this, deltaTime);
     }
 }
