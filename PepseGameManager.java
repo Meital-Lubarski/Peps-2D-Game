@@ -10,19 +10,31 @@ import danogl.util.Vector2;
 import pepse.world.Block;
 import pepse.world.Sky;
 import pepse.world.Terrain;
+
+import java.util.ArrayList;
 import java.util.List;
 import pepse.world.daynight.Sun;
 import pepse.world.daynight.SunHalo;
 
 import pepse.world.avatar.Avatar;
 import pepse.world.daynight.Night;
+import pepse.world.MiniWorld;
+
 
 public class PepseGameManager extends GameManager {
     // Constant initialization configurations
     private static final int INIT_SEED = 1000; // for us to play (changes ground)
     private static final int START_X = 0;
     private static final float DAY_CYCLE = 30f;
+    private static final int MINI_WORLD_WIDTH = 300;
+
     private Avatar avatar;
+    private Terrain terrain;
+
+    private float minX;
+    private float maxX;
+    private Vector2 windowDimensions;
+    private final List<MiniWorld> currentMiniWorlds = new ArrayList<>();
 
     @Override
     public void initializeGame(ImageReader imageReader,
@@ -30,25 +42,58 @@ public class PepseGameManager extends GameManager {
                                UserInputListener inputListener,
                                WindowController windowController) {
         super.initializeGame(imageReader, soundReader, inputListener, windowController);
-        Vector2 windowDimensions = windowController.getWindowDimensions();
-
+        this.windowDimensions = windowController.getWindowDimensions();
 
         createSky(windowDimensions); // create sky
-        createTerrain(windowDimensions); // create gound
+        this.terrain = new Terrain(windowDimensions, INIT_SEED);
         createSunAndHalo(windowDimensions);
         createNight(windowDimensions);
+        float windowWidth = windowDimensions.x();
+        this.minX = 0;
+        this.maxX = (float) Math.ceil(windowWidth / MINI_WORLD_WIDTH)*MINI_WORLD_WIDTH;
+        for (float x = minX; x < maxX; x += MINI_WORLD_WIDTH) {
+            createMiniWorld(x);
+        }
         createAvatarPlayer(windowDimensions, inputListener, imageReader);
         createEnergyDisplay();
         initCamera(windowController);
+    }
+
+    private void createMiniWorld(float startX) {
+        float endX = startX + MINI_WORLD_WIDTH;
+        MiniWorld miniWorld = new MiniWorld(startX, endX);
+        List<Block> blocksList = terrain.createInRange((int) startX, (int) endX);
+        for (Block block : blocksList) {
+            gameObjects().addGameObject(block, Layer.STATIC_OBJECTS);
+            miniWorld.add(block);
+        }
+        createFloraInMiniWorld(miniWorld, startX, endX);
+        currentMiniWorlds.add(miniWorld);
+    }
+
+    private void removeMiniWorlds() {
+        List<MiniWorld> oldMiniWorlds = new ArrayList<>();
+        for (MiniWorld miniWorld : currentMiniWorlds) {
+            if (miniWorld.getMaxX() < minX || miniWorld.getMinX() > maxX) {
+                miniWorld.remove(gameObjects());
+                oldMiniWorlds.add(miniWorld);
+            }
+        }
+        currentMiniWorlds.removeAll(oldMiniWorlds);
+    }
+
+    private void createFloraInMiniWorld(MiniWorld miniWorld, float minX, float maxX) {
+        // TODO: MEITAL PLEASE ADD THE FLORA HERE
     }
 
     /** creates the avatar and adds it to the game */
     private void createAvatarPlayer(Vector2 windowDimensions,
                                     UserInputListener inputListener,
                                     ImageReader imageReader) {
-        // Note: To perfectly align with Section 6.2.2 requirements, you'll eventually want to
-        // fetch the exact ground height using terrain.groundHeightAt(x) here!
-        Vector2 position = new Vector2(windowDimensions.x() / 2, windowDimensions.y() * 0.5f);
+        float x = windowDimensions.x() / 2;
+        float groundY = terrain.groundHeightAt(x); 
+        float y = groundY - Avatar.AVATAR_H;
+        Vector2 position = new Vector2(x, y);
         this.avatar = new Avatar(position, inputListener, imageReader);
         avatar.setTag("avatar");
         gameObjects().addGameObject(avatar, Layer.DEFAULT);
@@ -89,15 +134,6 @@ public class PepseGameManager extends GameManager {
         gameObjects().addGameObject(sky, skyLayer);
     }
 
-    /**creates the ground blocks and adds them to the static layer */
-    private void createTerrain(Vector2 windowDimensions) {
-        Terrain terrain = new Terrain(windowDimensions, INIT_SEED);
-        int maxX = (int) windowDimensions.x();
-        List<Block> blocksList = terrain.createInRange(START_X, maxX);
-        for (Block block: blocksList) {
-            gameObjects().addGameObject(block, Layer.STATIC_OBJECTS);
-        }
-    }
 
     /** Creates the night darkness and adds it to the foreground layer */
     private void createNight(Vector2 windowDimensions) {
@@ -107,6 +143,23 @@ public class PepseGameManager extends GameManager {
         gameObjects().addGameObject(nightOverlay, nightLayer);
     }
 
+    @Override
+    public void update(float deltaTime) {
+        super.update(deltaTime);
+        float cameraX = camera().getCenter().x();
+        float halfWindowWidth = windowDimensions.x() / 2;
+        if (cameraX + halfWindowWidth > maxX) {
+            createMiniWorld(maxX);
+            maxX += MINI_WORLD_WIDTH;
+            removeMiniWorlds();
+        }
+
+        if (cameraX - halfWindowWidth < minX) {
+            createMiniWorld(minX - MINI_WORLD_WIDTH);
+            minX -= MINI_WORLD_WIDTH;
+            removeMiniWorlds();
+        }
+    }
 
     public static void main(String[] args) {
         new PepseGameManager().run();
