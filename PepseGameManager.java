@@ -22,7 +22,7 @@ public class PepseGameManager extends GameManager {
     private static final int INIT_SEED = 1000; // for us to play (changes ground)
     private static final int START_X = 0;
     private static final float DAY_CYCLE = 30f;
-
+    private Avatar avatar;
 
     @Override
     public void initializeGame(ImageReader imageReader,
@@ -37,42 +37,44 @@ public class PepseGameManager extends GameManager {
         createTerrain(windowDimensions); // create gound
         createSunAndHalo(windowDimensions);
         createNight(windowDimensions);
-        createAvatar(windowDimensions, inputListener, imageReader, windowController);
+        createAvatarPlayer(windowDimensions, inputListener, imageReader);
+        createEnergyDisplay();
+        initCamera(windowController);
     }
-    private void createAvatar(Vector2 windowDimensions,
-                              UserInputListener inputListener,
-                              ImageReader imageReader,
-                              WindowController windowController) {
-        // Position the avatar horizontally in the middle, and vertically sitting right above the floor baseline
-        Vector2 initialPos = new Vector2(windowDimensions.x() / 2, windowDimensions.y() * 0.5f);
 
-        Avatar avatar = new Avatar(initialPos, inputListener, imageReader);
-
-        // Layer.DEFAULT ensures the avatar tracks physics collisions with Layer.STATIC_OBJECTS (the terrain)
+    /** creates the avatar and adds it to the game */
+    private void createAvatarPlayer(Vector2 windowDimensions,
+                                    UserInputListener inputListener,
+                                    ImageReader imageReader) {
+        // Note: To perfectly align with Section 6.2.2 requirements, you'll eventually want to
+        // fetch the exact ground height using terrain.groundHeightAt(x) here!
+        Vector2 position = new Vector2(windowDimensions.x() / 2, windowDimensions.y() * 0.5f);
+        this.avatar = new Avatar(position, inputListener, imageReader);
+        avatar.setTag("avatar");
         gameObjects().addGameObject(avatar, Layer.DEFAULT);
+    }
 
-        // // ADDED: Instantiate the Energy Counter Display Object at the top-left corner (e.g., coordinates 20, 20)
-        Vector2 energyUiPos = new Vector2(20, 20);
-        pepse.world.avatar.EnergyNum energyDisplay = new pepse.world.avatar.EnergyNum(energyUiPos);
-
-        // // ADDED: Essential step to ensure the text screen element follows the camera HUD viewport space!
+    /** create energy number display */
+    private void createEnergyDisplay() {
+        Vector2 energyCoords = new Vector2(20, 20);
+        pepse.world.avatar.EnergyNum energyDisplay = new pepse.world.avatar.EnergyNum(energyCoords);
         energyDisplay.setCoordinateSpace(danogl.components.CoordinateSpace.CAMERA_COORDINATES);
-
-        // // ADDED: Add the counter to a top layer so it stays visible above backgrounds and assets
         gameObjects().addGameObject(energyDisplay, Layer.UI);
-
-        // // ADDED: Register the UI element to receive continuous updates using the Observer pattern
         avatar.register(energyDisplay);
+    }
 
-        // Configure the engine's tracking system so the camera smoothly pans as you move
+    /** create camera to move with player.*/
+    private void initCamera(WindowController windowController) {
+        Vector2 windowDimensions = windowController.getWindowDimensions();
         setCamera(new Camera(
-                avatar,                                      // Object to target and follow
-                Vector2.ZERO,                                // Offset from center of screen
-                windowController.getWindowDimensions(),      // Dimensions of the viewport window
-                windowController.getWindowDimensions()       // Total dimensions of the tracking area bound
+                this.avatar,
+                Vector2.ZERO,
+                windowDimensions,
+                windowDimensions
         ));
     }
-    // Comment to test pushing in git
+
+
     private void createSunAndHalo(Vector2 windowDimensions){
         GameObject sun = Sun.create(windowDimensions, DAY_CYCLE);
         GameObject sunHalo = SunHalo.create(sun);
