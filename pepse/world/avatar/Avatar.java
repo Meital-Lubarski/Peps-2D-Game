@@ -12,6 +12,8 @@ import java.util.List;
  * The Avatar maintains a list of EnergyObservers and notifies them
  */
 public class Avatar extends GameObject {
+    public static final float AVATAR_H = 50f;
+
     // constant from platformer
     protected static final float VELOCITY_X = 400;
     protected static final float VELOCITY_Y = -650;
