@@ -11,8 +11,8 @@ import java.util.function.Function;
 
 
 public class Flora {
-    private static final double TREE_PROBABILITY = 0.1;
-    private static final int TREE_SPACING = Block.SIZE * 2;
+    private static final double TREE_PROBABILITY = 0.65;
+    private static final int TREE_SPACING = Block.SIZE * 7;
     private final Function<Float, Float> groundHeightAt;
     private final Consumer<Float> addEnergy;
     private final float cycleLength;
@@ -32,16 +32,18 @@ public class Flora {
 
     public List<Tree> createInRange(int minX, int maxX) {
         List<Tree> trees = new ArrayList<>();
-        int startX = adjustToBlock(minX);
-        int endX = adjustToBlock(maxX);
-        for (int x = startX; x < endX; x++) {
-            createTree(x, trees);
+        int startX = adjustToSpacing(minX);
+        //int endX = adjustToSpacing(maxX);
+        for (int x = startX; x < maxX; x+= TREE_SPACING) {
+            if(x >= minX){
+                createTree(x, trees);
+            }
         }
         return trees;
     }
 
-    private int adjustToBlock(int x) {
-        return (int) Math.floor((double) x / Block.SIZE) * Block.SIZE;
+    private int adjustToSpacing(int x) {
+        return (int) Math.ceil((double) x / TREE_SPACING) * TREE_SPACING;
     }
 
     private void createTree(int x, List<Tree> trees) {

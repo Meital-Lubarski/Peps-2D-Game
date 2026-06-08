@@ -6,6 +6,7 @@ import danogl.gui.SoundReader;
 import danogl.gui.UserInputListener;
 import danogl.gui.WindowController;
 import danogl.gui.rendering.Camera;
+import danogl.util.ModifiableList;
 import danogl.util.Vector2;
 import pepse.world.Block;
 import pepse.world.Sky;
@@ -20,6 +21,9 @@ import pepse.world.avatar.Avatar;
 import pepse.world.daynight.Night;
 import pepse.world.MiniWorld;
 
+import pepse.world.trees.Flora;
+import pepse.world.trees.Tree;
+
 
 public class PepseGameManager extends GameManager {
     // Constant initialization configurations
@@ -30,6 +34,7 @@ public class PepseGameManager extends GameManager {
 
     private Avatar avatar;
     private Terrain terrain;
+    private Flora flora;
 
     private float minX;
     private float maxX;
@@ -48,14 +53,15 @@ public class PepseGameManager extends GameManager {
         this.terrain = new Terrain(windowDimensions, INIT_SEED);
         createSunAndHalo(windowDimensions);
         createNight(windowDimensions);
+        createAvatarPlayer(windowDimensions, inputListener, imageReader);
+        createEnergyDisplay();
+        this.flora = new Flora(terrain::groundHeightAt, energy -> avatar.setEnergy(avatar.getEnergy() + energy), DAY_CYCLE, INIT_SEED);
         float windowWidth = windowDimensions.x();
         this.minX = 0;
         this.maxX = (float) Math.ceil(windowWidth / MINI_WORLD_WIDTH)*MINI_WORLD_WIDTH;
         for (float x = minX; x < maxX; x += MINI_WORLD_WIDTH) {
             createMiniWorld(x);
         }
-        createAvatarPlayer(windowDimensions, inputListener, imageReader);
-        createEnergyDisplay();
         initCamera(windowController);
     }
 
@@ -73,8 +79,9 @@ public class PepseGameManager extends GameManager {
 
     private void removeMiniWorlds() {
         List<MiniWorld> oldMiniWorlds = new ArrayList<>();
+        float margin = MINI_WORLD_WIDTH * 2;
         for (MiniWorld miniWorld : currentMiniWorlds) {
-            if (miniWorld.getMaxX() < minX || miniWorld.getMinX() > maxX) {
+            if (miniWorld.getMaxX() < minX - margin || miniWorld.getMinX() > maxX + margin) {
                 miniWorld.remove(gameObjects());
                 oldMiniWorlds.add(miniWorld);
             }
@@ -83,7 +90,21 @@ public class PepseGameManager extends GameManager {
     }
 
     private void createFloraInMiniWorld(MiniWorld miniWorld, float minX, float maxX) {
-        // TODO: MEITAL PLEASE ADD THE FLORA HERE
+        List<Tree> trees = flora.createInRange((int) minX, (int) maxX);
+        for(Tree tree : trees){
+            for(GameObject trunk : tree.getTrunks()){
+                gameObjects().addGameObject(trunk, Layer.STATIC_OBJECTS);
+                miniWorld.add(trunk);
+            }
+            for(GameObject leaf : tree.getLeaves()){
+                gameObjects().addGameObject(leaf, Layer.DEFAULT);
+                miniWorld.add(leaf);
+            }
+            for(GameObject fruit : tree.getFruits()){
+                gameObjects().addGameObject(fruit, Layer.DEFAULT);
+                miniWorld.add(fruit);
+            }
+        }
     }
 
     /** creates the avatar and adds it to the game */
