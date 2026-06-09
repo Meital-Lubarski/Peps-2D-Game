@@ -14,7 +14,7 @@ import java.util.List;
 public class Avatar extends GameObject {
     public static final float AVATAR_H = 50f;
 
-    // constant from platformer
+    // platformer constants chose protected bec we use inside idle\jump\run state
     protected static final float VELOCITY_X = 400;
     protected static final float VELOCITY_Y = -650;
     private static final float GRAVITY = 600;
@@ -94,5 +94,18 @@ public class Avatar extends GameObject {
         super.update(deltaTime);
         currentState.handle(this, inputListener);
         currentState.stateRules(this, deltaTime);
+    }
+
+
+    @Override
+    public void onCollisionEnter(GameObject other, danogl.collisions.Collision collision) {
+        super.onCollisionEnter(other, collision);
+        // we hit ground or tree
+        if (other.getTag().equals("ground") || other.getTag().equals("trunk")) {
+            if (this.getVelocity().y() > 0 || collision.getNormal().y() < 0) {
+                this.transform().setVelocityY(0);
+                this.changeState(Avatar.IDLE_STATE);
+            }
+        }
     }
 }

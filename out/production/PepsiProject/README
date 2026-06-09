@@ -1,0 +1,34 @@
+diana_.1b, meital
+209780824, 206480964
+
+Q1) avatar package, class+responsibilities:
+*Avatar: main player entity, responsible for initializing the animations and current energy level,
+ acts as publisher in the Observer pattern, updating subscribers  when energy changes.
+*State:  interface for the character's behavior. has methods to handle input driven state changes
+ and to execute logic rules (stateRules).
+*IdleState: Implements the `State` interface. controls avatar when it rests on ground.
+*RunState: Implements the `State` interface. controls avatar when running left or right on  ground.
+*JumpState: Implements the `State` interface. controls avatar when its in air.
+*EnergyObserver: interface for any entity that needs to know when the player's energy level moves.
+*EnergyNum: text GameObject that implements EnergyObserver. receives updates the player entity
+
+OOP Design Choices for the avatar package:
+*The State Design Pattern:
+ helps to separate the player's movement states into classes.
+ preserves Single Responsibility Principle, also the Open/Closed Principle (easy to add new states)
+*The Observer Design Pattern:
+ handle updates to the user interface text. Avatar as the publisher and EnergyNum as the subscriber.
+*Program to an Interface, Not an Implementation:
+ avatar class interacts exclusively with the `State` and `EnergyObserver` interfaces.
+
+Q2)
+ TODO Meital
+
+Q3) More classes we added are:
+MiniWorld: Represents a world of the game in a fixed X range.
+Its job is to tracks all the GameObject components such as blocks and trees in its x range.
+OOP Design Choices :
+Encapsulation+Information Hiding: The cleanup is hidden inside MiniWorld.remove().
+Single Responsibility Principle: MiniWorld handles local  world cycle management for X range.
+
+Q4) changes in API:

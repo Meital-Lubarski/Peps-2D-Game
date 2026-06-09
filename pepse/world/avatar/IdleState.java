@@ -12,7 +12,6 @@ public class IdleState implements State{
     private static final float MIN_JUMP_ENERGY = 20f;
     private static final float MIN_RUN_ENERGY = 2f;
     private static final float REST_ENERGY = 1f;
-
     private final AnimationRenderable animation;
     /** constructor for the idle state
      * @param animation The idle animation renderable */
@@ -61,7 +60,7 @@ public class IdleState implements State{
      * @param deltaTime The time since the last frame update */
     @Override
     public void stateRules(Avatar avatar, float deltaTime) {
-            avatar.renderer().setRenderable(animation);
-            avatar.setEnergy(avatar.getEnergy() + REST_ENERGY); // 1 energy bec resting
+        avatar.renderer().setRenderable(animation);
+         avatar.setEnergy(avatar.getEnergy() + REST_ENERGY); // 1 energy bec resting
     }
 }
