@@ -19,7 +19,7 @@ public class JumpState implements State{
     }
     @Override
     public void handle(Avatar avatar, UserInputListener inputListener) {
-        if (avatar.getVelocity().y() == 0) { // means we on ground
+        if (Math.abs(avatar.getVelocity().y()) < 1.0f) {
             avatar.changeState(Avatar.IDLE_STATE);
             return;
         }

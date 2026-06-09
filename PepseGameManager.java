@@ -24,13 +24,15 @@ import pepse.world.MiniWorld;
 import pepse.world.trees.Flora;
 import pepse.world.trees.Tree;
 
-
+/** main game manager for PEPSE game, responsible for initializing
+ * the environment and constructing world elements
+ * @author Diana Basil and Meital Lubarski
+ */
 public class PepseGameManager extends GameManager {
     // Constant initialization configurations
     private static final int INIT_SEED = 1000; // for us to play (changes ground)
-    private static final int START_X = 0;
     private static final float DAY_CYCLE = 30f;
-    private static final int MINI_WORLD_WIDTH = 300;
+    private static final int MINI_WORLD_WIDTH = 600;
 
     private Avatar avatar;
     private Terrain terrain;
@@ -40,7 +42,12 @@ public class PepseGameManager extends GameManager {
     private float maxX;
     private Vector2 windowDimensions;
     private final List<MiniWorld> currentMiniWorlds = new ArrayList<>();
-
+    /** overrides engine initialization cycle to initialize game environments,*
+     * @param imageReader      The rendering image reader
+     * @param soundReader      The rendering sound reader
+     * @param inputListener    The runtime device user input
+     * @param windowController The target UI layout window frame
+     */
     @Override
     public void initializeGame(ImageReader imageReader,
                                SoundReader soundReader,
@@ -64,7 +71,8 @@ public class PepseGameManager extends GameManager {
         }
         initCamera(windowController);
     }
-
+    /** creates MiniWorld by placing grounds & trees in a start x range
+     * @param startX The initial left boundary pixel coordinate */
     private void createMiniWorld(float startX) {
         float endX = startX + MINI_WORLD_WIDTH;
         MiniWorld miniWorld = new MiniWorld(startX, endX);
@@ -76,7 +84,7 @@ public class PepseGameManager extends GameManager {
         createFloraInMiniWorld(miniWorld, startX, endX);
         currentMiniWorlds.add(miniWorld);
     }
-
+    /** cleans up the miniWorld elements located beyond viewpoint on screen */
     private void removeMiniWorlds() {
         List<MiniWorld> oldMiniWorlds = new ArrayList<>();
         float margin = MINI_WORLD_WIDTH * 2;
@@ -88,7 +96,10 @@ public class PepseGameManager extends GameManager {
         }
         currentMiniWorlds.removeAll(oldMiniWorlds);
     }
-
+    /** creates flora inside X range
+     * @param miniWorld The miniWorld in the X range
+     * @param minX      The minimum x bound
+     * @param maxX      The maximum x bound */
     private void createFloraInMiniWorld(MiniWorld miniWorld, float minX, float maxX) {
         List<Tree> trees = flora.createInRange((int) minX, (int) maxX);
         for(Tree tree : trees){
@@ -107,7 +118,7 @@ public class PepseGameManager extends GameManager {
         }
     }
 
-    /** creates the avatar and adds it to the game */
+    /** creates the avatar and adds it to the game*/
     private void createAvatarPlayer(Vector2 windowDimensions,
                                     UserInputListener inputListener,
                                     ImageReader imageReader) {
@@ -140,7 +151,8 @@ public class PepseGameManager extends GameManager {
         ));
     }
 
-
+    /** creates sun+halo objects
+     * @param windowDimensions The window dimensions  */
     private void createSunAndHalo(Vector2 windowDimensions){
         GameObject sun = Sun.create(windowDimensions, DAY_CYCLE);
         GameObject sunHalo = SunHalo.create(sun);
@@ -155,7 +167,6 @@ public class PepseGameManager extends GameManager {
         gameObjects().addGameObject(sky, skyLayer);
     }
 
-
     /** Creates the night darkness and adds it to the foreground layer */
     private void createNight(Vector2 windowDimensions) {
         GameObject nightOverlay = Night.create(windowDimensions, DAY_CYCLE);
@@ -163,7 +174,8 @@ public class PepseGameManager extends GameManager {
         int nightLayer = Layer.FOREGROUND;
         gameObjects().addGameObject(nightOverlay, nightLayer);
     }
-
+    /** Executes frame state updates
+     * @param deltaTime  delta frame timeframe modifier scalar value*/
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
@@ -174,14 +186,15 @@ public class PepseGameManager extends GameManager {
             maxX += MINI_WORLD_WIDTH;
             removeMiniWorlds();
         }
-
         if (cameraX - halfWindowWidth < minX) {
-            createMiniWorld(minX - MINI_WORLD_WIDTH);
-            minX -= MINI_WORLD_WIDTH;
+            float targetMinX = minX - MINI_WORLD_WIDTH;
+            createMiniWorld(targetMinX);
+            minX = targetMinX;
             removeMiniWorlds();
         }
     }
-
+    /** main to initialize the game
+     * @param args System environment parameter */
     public static void main(String[] args) {
         new PepseGameManager().run();
     }

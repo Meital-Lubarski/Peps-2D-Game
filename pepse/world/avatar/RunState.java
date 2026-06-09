@@ -11,7 +11,6 @@ public class RunState implements State{
     private static final float MIN_JUMP_ENERGY = 20f;
     private static final float MIN_RUN_ENERGY = 2f;
     private static final float RUN_ENERGY = 2f;
-
     private final AnimationRenderable animation;
 
     /** constructor for the run state
@@ -25,8 +24,7 @@ public class RunState implements State{
      */
     @Override
     public void handle(Avatar avatar, UserInputListener inputListener) {
-        // if we run and fall, we are no longer on ground so change state to jump
-        if (avatar.getVelocity().y() != 0) {
+        if (Math.abs(avatar.getVelocity().y()) > 1.0f) {
             avatar.changeState(Avatar.JUMP_STATE);
             return;
         }
