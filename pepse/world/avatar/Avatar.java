@@ -85,10 +85,12 @@ public class Avatar extends GameObject {
         return this.energy;
     }
 
+    /**setter for a state, chaneges the current state */
     public void changeState(State newState) {
         this.currentState = newState;
     }
 
+    /** updates character every frame. Delegates work to current state */
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
@@ -96,7 +98,8 @@ public class Avatar extends GameObject {
         currentState.stateRules(this, deltaTime);
     }
 
-
+    /** Triggers whenever the avatar crashes into solid (tree\ground)
+     * Stops falling speeds instantly if landing on solid!*/
     @Override
     public void onCollisionEnter(GameObject other, danogl.collisions.Collision collision) {
         super.onCollisionEnter(other, collision);
