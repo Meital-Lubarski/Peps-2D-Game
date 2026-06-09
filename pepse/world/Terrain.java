@@ -10,9 +10,12 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
-/** responsible for generating ground in a range, calculate terrain height
-* @author Diana Basil and Meital Lubarski
- * */
+/**
+ * responsible for generating ground in a range, calculate terrain height
+ *
+ * @author Diana Basil and Meital Lubarski
+ *
+ */
 public class Terrain {
 
     private static final Color GROUND_COLOR = new Color(212, 123, 74);
@@ -24,16 +27,21 @@ public class Terrain {
     private final NoiseGenerator noiseGenerator;
     private final Vector2 windowDimensions;
 
-    /** constructs a terrain
+    /**
+     * constructs a terrain
+     *
      * @param windowDimensions The dimensions of the game window
-     * @param seed             The seed for noise generation*/
+     * @param seed             The seed for noise generation
+     */
     public Terrain(Vector2 windowDimensions, int seed) {
         this.windowDimensions = windowDimensions;
         this.groundHeightAtX0 = windowDimensions.y() * BASE_HEIGHT_FRAC;
         this.noiseGenerator = new NoiseGenerator(seed, (int) groundHeightAtX0);
     }
 
-    /** calc ground height at x coordinate
+    /**
+     * calc ground height at x coordinate
+     *
      * @param x The horizontal coordinate.
      * @return The vertical pixel position where ground surface begins.
      */
@@ -42,7 +50,9 @@ public class Terrain {
         return groundHeightAtX0 + noise;
     }
 
-    /** generates a grid list of Block objects in a range
+    /**
+     * generates a grid list of Block objects in a range
+     *
      * @param minX The minimum horizontal coordinate limit.
      * @param maxX The maximum horizontal coordinate limit.
      * @return A list containing all generated terrain ground Block objects within the window chunk.
@@ -66,7 +76,7 @@ public class Terrain {
                         ColorSupplier.approximateColor(GROUND_COLOR)
                 );
                 Block block = new Block(blockPosition, renderable);
-                block.setTag("ground");
+                block.setTag(Block.GROUND_TAG);
                 blocks.add(block);
             }
         }

@@ -5,12 +5,19 @@ import danogl.gui.ImageReader;
 import danogl.gui.UserInputListener;
 import danogl.gui.rendering.AnimationRenderable;
 import danogl.util.Vector2;
+
 import java.util.ArrayList;
 import java.util.List;
 
-/** acts as a publisher in the Observer Design Pattern for energy updates
+import pepse.world.Block;
+import pepse.world.trees.Trunk;
+
+/**
+ * acts as a publisher in the Observer Design Pattern for energy updates
  * The Avatar maintains a list of EnergyObservers and notifies them
- *@author Diana Basil and Meital Lubarski */
+ *
+ * @author Diana Basil and Meital Lubarski
+ */
 public class Avatar extends GameObject {
     public static final float AVATAR_H = 50f;
 
@@ -32,22 +39,42 @@ public class Avatar extends GameObject {
     public static State RUN_STATE;
     public static State JUMP_STATE;
 
-    /** Constructor for Avatar entity. */
+    private static final String IDLE_IMAGE_0 = "assets/idle_0.png";
+    private static final String IDLE_IMAGE_1 = "assets/idle_1.png";
+    private static final String IDLE_IMAGE_2 = "assets/idle_2.png";
+    private static final String IDLE_IMAGE_3 = "assets/idle_3.png";
+
+    private static final String RUN_IMAGE_0 = "assets/run_0.png";
+    private static final String RUN_IMAGE_1 = "assets/run_1.png";
+    private static final String RUN_IMAGE_2 = "assets/run_2.png";
+    private static final String RUN_IMAGE_3 = "assets/run_3.png";
+    private static final String RUN_IMAGE_4 = "assets/run_4.png";
+    private static final String RUN_IMAGE_5 = "assets/run_5.png";
+
+    private static final String JUMP_IMAGE_0 = "assets/jump_0.png";
+    private static final String JUMP_IMAGE_1 = "assets/jump_1.png";
+    private static final String JUMP_IMAGE_2 = "assets/jump_2.png";
+    private static final String JUMP_IMAGE_3 = "assets/jump_3.png";
+
+
+    /**
+     * Constructor for Avatar entity.
+     */
     public Avatar(Vector2 topLeftCorner, UserInputListener inputListener, ImageReader imageReader) {
-        super(topLeftCorner, AVATAR_SIZE, imageReader.readImage("assets/idle_0.png", true));
+        super(topLeftCorner, AVATAR_SIZE, imageReader.readImage(IDLE_IMAGE_0, true));
         this.inputListener = inputListener;
 
         AnimationRenderable idlePics = new AnimationRenderable(
-                new String[]{"assets/idle_0.png", "assets/idle_1.png",
-                        "assets/idle_2.png", "assets/idle_3.png"},
+                new String[]{IDLE_IMAGE_0, IDLE_IMAGE_1,
+                        IDLE_IMAGE_2, IDLE_IMAGE_3},
                 imageReader, true, TIME_BETWEEN_CLIPS);
         AnimationRenderable runPics = new AnimationRenderable(
-                new String[]{"assets/run_0.png", "assets/run_1.png", "assets/run_2.png",
-                        "assets/run_3.png", "assets/run_4.png", "assets/run_5.png"},
+                new String[]{RUN_IMAGE_0, RUN_IMAGE_1, RUN_IMAGE_2,
+                        RUN_IMAGE_3, RUN_IMAGE_4, RUN_IMAGE_5},
                 imageReader, true, TIME_BETWEEN_CLIPS);
         AnimationRenderable jumpPics = new AnimationRenderable(
-                new String[]{"assets/jump_0.png", "assets/jump_1.png",
-                        "assets/jump_2.png", "assets/jump_3.png"},
+                new String[]{JUMP_IMAGE_0, JUMP_IMAGE_1,
+                        JUMP_IMAGE_2, JUMP_IMAGE_3},
                 imageReader, true, TIME_BETWEEN_CLIPS);
 
 
@@ -61,18 +88,27 @@ public class Avatar extends GameObject {
         physics().preventIntersectionsFromDirection(Vector2.ZERO); // takes avatar down
         transform().setAccelerationY(GRAVITY); // prevents avatar from sinking in ground
     }
-    /** registers a new observer to receive updates */
+
+    /**
+     * registers a new observer to receive updates
+     */
     public void register(EnergyObserver observer) {
         observers.add(observer);
         observer.updateEnergy(energy);
     }
-    /** Iterates the list of observers and updates them */
+
+    /**
+     * Iterates the list of observers and updates them
+     */
     private void notifyObservers() {
         for (EnergyObserver observer : observers) {
             observer.updateEnergy(energy);
         }
     }
-    /** setter for energy, notify's all subscribers*/
+
+    /**
+     * setter for energy, notify's all subscribers
+     */
     public void setEnergy(float energy) {
         float oldEnergy = this.energy;
         this.energy = Math.max(0f, Math.min(100f, energy));
@@ -80,17 +116,24 @@ public class Avatar extends GameObject {
             notifyObservers();
         }
     }
-    /** getter for energy*/
+
+    /**
+     * getter for energy
+     */
     public float getEnergy() {
         return this.energy;
     }
 
-    /**setter for a state, chaneges the current state */
+    /**
+     * setter for a state, changes the current state
+     */
     public void changeState(State newState) {
         this.currentState = newState;
     }
 
-    /** updates character every frame. Delegates work to current state */
+    /**
+     * updates character every frame. Delegates work to current state
+     */
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
@@ -98,13 +141,15 @@ public class Avatar extends GameObject {
         currentState.stateRules(this, deltaTime);
     }
 
-    /** Triggers whenever the avatar crashes into solid (tree\ground)
-     * Stops falling speeds instantly if landing on solid!*/
+    /**
+     * Triggers whenever the avatar crashes into solid (tree\ground)
+     * Stops falling speeds instantly if landing on solid!
+     */
     @Override
     public void onCollisionEnter(GameObject other, danogl.collisions.Collision collision) {
         super.onCollisionEnter(other, collision);
         // we hit ground or tree
-        if (other.getTag().equals("ground") || other.getTag().equals("trunk")) {
+        if (other.getTag().equals(Block.GROUND_TAG) || other.getTag().equals(Trunk.TRUNK_TAG)) {
             if (this.getVelocity().y() > 0 || collision.getNormal().y() < 0) {
                 this.transform().setVelocityY(0);
                 this.changeState(Avatar.IDLE_STATE);

@@ -7,20 +7,26 @@ import java.awt.event.KeyEvent;
 
 /**
  * represents the Jump state. The avatar is NOT on ground!! (jumping or fall)
+ *
  * @author Diana Basil and Meital Lubarski
  */
-public class JumpState implements State{
+public class JumpState implements State {
     private static final float DOUBLE_JUMP_ENERGY = 50f;
     private final AnimationRenderable animation;
 
-    /** constructor for the jump state
-     * @param animation The jump animation renderable */
+    /**
+     * constructor for the jump state
+     *
+     * @param animation The jump animation renderable
+     */
     public JumpState(AnimationRenderable animation) {
         this.animation = animation;
     }
 
-    /** checks keyboard to see if we should leave the jump state
-     * @param avatar The avatar instance
+    /**
+     * checks keyboard to see if we should leave the jump state
+     *
+     * @param avatar        The avatar instance
      * @param inputListener The input channel reading keyboard
      */
     @Override
@@ -54,9 +60,12 @@ public class JumpState implements State{
         avatar.transform().setVelocityX(xVel);
     }
 
-    /** executes the rules of the jump state
-     * @param avatar The avatar instance
-     * @param deltaTime The time since the last frame update */
+    /**
+     * executes the rules of the jump state
+     *
+     * @param avatar    The avatar instance
+     * @param deltaTime The time since the last frame update
+     */
     @Override
     public void stateRules(Avatar avatar, float deltaTime) {
         avatar.renderer().setRenderable(animation);

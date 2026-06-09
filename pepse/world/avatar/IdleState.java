@@ -1,26 +1,36 @@
 package pepse.world.avatar;
+
 import danogl.gui.UserInputListener;
 import danogl.gui.rendering.AnimationRenderable;
 
 import java.awt.event.KeyEvent;
 
-/** represents Idle State using the State Design Pattern.
+/**
+ * represents Idle State using the State Design Pattern.
  * when the avatar is idle it is always on ground!!
- * @author Diana Basil and Meital Lubarski **/
+ *
+ * @author Diana Basil and Meital Lubarski
+ **/
 
-public class IdleState implements State{
+public class IdleState implements State {
     private static final float MIN_JUMP_ENERGY = 20f;
     private static final float MIN_RUN_ENERGY = 2f;
     private static final float REST_ENERGY = 1f;
     private final AnimationRenderable animation;
-    /** constructor for the idle state
-     * @param animation The idle animation renderable */
+
+    /**
+     * constructor for the idle state
+     *
+     * @param animation The idle animation renderable
+     */
     public IdleState(AnimationRenderable animation) {
         this.animation = animation;
     }
 
-    /** checks keyboard to see if we should leave the Idle state
-     * @param avatar The avatar instance
+    /**
+     * checks keyboard to see if we should leave the Idle state
+     *
+     * @param avatar        The avatar instance
      * @param inputListener The input channel reading keyboard
      */
     @Override
@@ -40,12 +50,11 @@ public class IdleState implements State{
             avatar.transform().setVelocityX(0);
             return;
         }
-        if (left){
+        if (left) {
             xVel -= Avatar.VELOCITY_X;
         }
 
-        if (right)
-        {
+        if (right) {
             xVel += Avatar.VELOCITY_X;
         }
         if (xVel != 0 && avatar.getEnergy() >= MIN_RUN_ENERGY) { // need at least 2 to run
@@ -55,12 +64,16 @@ public class IdleState implements State{
             avatar.transform().setVelocityX(0); // dont move
         }
     }
-    /** executes the rules of the Idle state
-     * @param avatar The avatar instance
-     * @param deltaTime The time since the last frame update */
+
+    /**
+     * executes the rules of the Idle state
+     *
+     * @param avatar    The avatar instance
+     * @param deltaTime The time since the last frame update
+     */
     @Override
     public void stateRules(Avatar avatar, float deltaTime) {
         avatar.renderer().setRenderable(animation);
-         avatar.setEnergy(avatar.getEnergy() + REST_ENERGY); // 1 energy bec resting
+        avatar.setEnergy(avatar.getEnergy() + REST_ENERGY); // 1 energy bec resting
     }
 }

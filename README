@@ -21,14 +21,44 @@ OOP Design Choices for the avatar package:
 *Program to an Interface, Not an Implementation:
  avatar class interacts exclusively with the `State` and `EnergyObserver` interfaces.
 
-Q2)
- TODO Meital
+Q2) trees package, class+responsibilities:
+*Flora: responsible for generating trees in a given world range. Uses deterministic randomness
+ so the same world area always generates the same trees.
+*Tree: acts as a facade for the tree structure. Responsible for creating and managing all
+ parts of a tree: trunks, leaves and fruits.
+*Trunk: creates the trunk blocks of the tree. These blocks are collidable.
+*Leaf: creates leaf objects and their wind animations. Responsible for rotating the leaves
+ and changing their width over time.
+*Fruit: creates collectible fruits. Gives energy to the avatar when collected and reappears
+ after one day cycle.
+
+OOP Design Choices for the trees package:
+*The Facade Design Pattern:
+ Tree acts as a facade for the tree structure. The game manager does not need to know how
+ trunks, leaves and fruits are created. It only interacts with the Tree object.
+*The Factory Method Pattern:
+ Tree, Trunk, Leaf and Fruit use static create methods to encapsulate object creation and
+ initialization logic.
+*Single Responsibility Principle:
+ Each class is responsible for one part of the tree system. Flora generates trees, Tree manages
+ tree components, Trunk creates trunks, Leaf handles animations and Fruit handles energy
+ collection and respawning.
+*Deterministic Tree Generation:
+ Flora generates trees using a deterministic random seed based on the world seed and tree
+ position. This guarantees that revisiting the same location recreates the same trees.
+*Program to an Interface, Not an Implementation:
+ Fruit does not depend directly on the Avatar class.
+ Instead, a Consumer<Float> callback is passed through Flora and Tree into Fruit.
+ When collected, the fruit invokes the callback to update the player's energy.
+ This keeps the vegetation package independent from the avatar implementation.
 
 Q3) More classes we added are:
 MiniWorld: Represents a world of the game in a fixed X range.
 Its job is to tracks all the GameObject components such as blocks and trees in its x range.
 OOP Design Choices :
 Encapsulation+Information Hiding: The cleanup is hidden inside MiniWorld.remove().
-Single Responsibility Principle: MiniWorld handles local  world cycle management for X range.
+Single Responsibility Principle: MiniWorld handles local world cycle management for X range.
 
 Q4) changes in API:
+We added a public constant (GROUND_TAG) to Block for avoiding magic strings.
+No existing API methods were modified.

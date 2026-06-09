@@ -2,25 +2,34 @@ package pepse.world.avatar;
 
 import danogl.gui.UserInputListener;
 import danogl.gui.rendering.AnimationRenderable;
+
 import java.awt.event.KeyEvent;
 
-/** represents the run state.
+/**
+ * represents the run state.
  * in this state the avatar is on ground!!
+ *
  * @author Diana Basil and Meital Lubarski
  */
-public class RunState implements State{
+public class RunState implements State {
     private static final float MIN_JUMP_ENERGY = 20f;
     private static final float MIN_RUN_ENERGY = 2f;
     private static final float RUN_ENERGY = 2f;
     private final AnimationRenderable animation;
 
-    /** constructor for the run state
-     * @param animation The run animation renderable */
+    /**
+     * constructor for the run state
+     *
+     * @param animation The run animation renderable
+     */
     public RunState(AnimationRenderable animation) {
         this.animation = animation;
     }
-    /** checks keyboard to see if we should leave the run state
-     * @param avatar The avatar instance
+
+    /**
+     * checks keyboard to see if we should leave the run state
+     *
+     * @param avatar        The avatar instance
      * @param inputListener The input channel reading keyboard
      */
     @Override
@@ -65,9 +74,12 @@ public class RunState implements State{
         }
     }
 
-    /** executes the rules of the run state
-     * @param avatar The avatar instance
-     * @param deltaTime The time since the last frame update */
+    /**
+     * executes the rules of the run state
+     *
+     * @param avatar    The avatar instance
+     * @param deltaTime The time since the last frame update
+     */
     @Override
     public void stateRules(Avatar avatar, float deltaTime) {
         avatar.renderer().setRenderable(animation);

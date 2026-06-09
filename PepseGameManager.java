@@ -6,7 +6,6 @@ import danogl.gui.SoundReader;
 import danogl.gui.UserInputListener;
 import danogl.gui.WindowController;
 import danogl.gui.rendering.Camera;
-import danogl.util.ModifiableList;
 import danogl.util.Vector2;
 import pepse.world.Block;
 import pepse.world.Sky;
@@ -14,6 +13,7 @@ import pepse.world.Terrain;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import pepse.world.daynight.Sun;
 import pepse.world.daynight.SunHalo;
 
@@ -24,8 +24,10 @@ import pepse.world.MiniWorld;
 import pepse.world.trees.Flora;
 import pepse.world.trees.Tree;
 
-/** main game manager for PEPSE game, responsible for initializing
+/**
+ * main game manager for PEPSE game, responsible for initializing
  * the environment and constructing world elements
+ *
  * @author Diana Basil and Meital Lubarski
  */
 public class PepseGameManager extends GameManager {
@@ -42,7 +44,10 @@ public class PepseGameManager extends GameManager {
     private float maxX;
     private Vector2 windowDimensions;
     private final List<MiniWorld> currentMiniWorlds = new ArrayList<>();
-    /** overrides engine initialization cycle to initialize game environments,*
+
+    /**
+     * overrides engine initialization cycle to initialize game environments,*
+     *
      * @param imageReader      The rendering image reader
      * @param soundReader      The rendering sound reader
      * @param inputListener    The runtime device user input
@@ -62,17 +67,22 @@ public class PepseGameManager extends GameManager {
         createNight(windowDimensions);
         createAvatarPlayer(windowDimensions, inputListener, imageReader);
         createEnergyDisplay();
-        this.flora = new Flora(terrain::groundHeightAt, energy -> avatar.setEnergy(avatar.getEnergy() + energy), DAY_CYCLE, INIT_SEED);
+        this.flora = new Flora(terrain::groundHeightAt,
+                energy -> avatar.setEnergy(avatar.getEnergy() + energy), DAY_CYCLE, INIT_SEED);
         float windowWidth = windowDimensions.x();
         this.minX = 0;
-        this.maxX = (float) Math.ceil(windowWidth / MINI_WORLD_WIDTH)*MINI_WORLD_WIDTH;
+        this.maxX = (float) Math.ceil(windowWidth / MINI_WORLD_WIDTH) * MINI_WORLD_WIDTH;
         for (float x = minX; x < maxX; x += MINI_WORLD_WIDTH) {
             createMiniWorld(x);
         }
         initCamera(windowController);
     }
-    /** creates MiniWorld by placing grounds & trees in a start x range
-     * @param startX The initial left boundary pixel coordinate */
+
+    /**
+     * creates MiniWorld by placing grounds & trees in a start x range
+     *
+     * @param startX The initial left boundary pixel coordinate
+     */
     private void createMiniWorld(float startX) {
         float endX = startX + MINI_WORLD_WIDTH;
         MiniWorld miniWorld = new MiniWorld(startX, endX);
@@ -84,7 +94,10 @@ public class PepseGameManager extends GameManager {
         createFloraInMiniWorld(miniWorld, startX, endX);
         currentMiniWorlds.add(miniWorld);
     }
-    /** cleans up the miniWorld elements located beyond viewpoint on screen */
+
+    /**
+     * cleans up the miniWorld elements located beyond viewpoint on screen
+     */
     private void removeMiniWorlds() {
         List<MiniWorld> oldMiniWorlds = new ArrayList<>();
         float margin = MINI_WORLD_WIDTH * 2;
@@ -96,34 +109,40 @@ public class PepseGameManager extends GameManager {
         }
         currentMiniWorlds.removeAll(oldMiniWorlds);
     }
-    /** creates flora inside X range
+
+    /**
+     * creates flora inside X range
+     *
      * @param miniWorld The miniWorld in the X range
      * @param minX      The minimum x bound
-     * @param maxX      The maximum x bound */
+     * @param maxX      The maximum x bound
+     */
     private void createFloraInMiniWorld(MiniWorld miniWorld, float minX, float maxX) {
         List<Tree> trees = flora.createInRange((int) minX, (int) maxX);
-        for(Tree tree : trees){
-            for(GameObject trunk : tree.getTrunks()){
+        for (Tree tree : trees) {
+            for (GameObject trunk : tree.getTrunks()) {
                 gameObjects().addGameObject(trunk, Layer.STATIC_OBJECTS);
                 miniWorld.add(trunk);
             }
-            for(GameObject leaf : tree.getLeaves()){
+            for (GameObject leaf : tree.getLeaves()) {
                 gameObjects().addGameObject(leaf, Layer.DEFAULT);
                 miniWorld.add(leaf);
             }
-            for(GameObject fruit : tree.getFruits()){
+            for (GameObject fruit : tree.getFruits()) {
                 gameObjects().addGameObject(fruit, Layer.DEFAULT);
                 miniWorld.add(fruit);
             }
         }
     }
 
-    /** creates the avatar and adds it to the game*/
+    /**
+     * creates the avatar and adds it to the game
+     */
     private void createAvatarPlayer(Vector2 windowDimensions,
                                     UserInputListener inputListener,
                                     ImageReader imageReader) {
         float x = windowDimensions.x() / 2;
-        float groundY = terrain.groundHeightAt(x); 
+        float groundY = terrain.groundHeightAt(x);
         float y = groundY - Avatar.AVATAR_H;
         Vector2 position = new Vector2(x, y);
         this.avatar = new Avatar(position, inputListener, imageReader);
@@ -131,7 +150,9 @@ public class PepseGameManager extends GameManager {
         gameObjects().addGameObject(avatar, Layer.DEFAULT);
     }
 
-    /** create energy number display */
+    /**
+     * create energy number display
+     */
     private void createEnergyDisplay() {
         Vector2 energyCoords = new Vector2(20, 20);
         pepse.world.avatar.EnergyNum energyDisplay = new pepse.world.avatar.EnergyNum(energyCoords);
@@ -140,7 +161,9 @@ public class PepseGameManager extends GameManager {
         avatar.register(energyDisplay);
     }
 
-    /** create camera to move with player.*/
+    /**
+     * create camera to move with player.
+     */
     private void initCamera(WindowController windowController) {
         Vector2 windowDimensions = windowController.getWindowDimensions();
         setCamera(new Camera(
@@ -151,31 +174,42 @@ public class PepseGameManager extends GameManager {
         ));
     }
 
-    /** creates sun+halo objects
-     * @param windowDimensions The window dimensions  */
-    private void createSunAndHalo(Vector2 windowDimensions){
+    /**
+     * creates sun+halo objects
+     *
+     * @param windowDimensions The window dimensions
+     */
+    private void createSunAndHalo(Vector2 windowDimensions) {
         GameObject sun = Sun.create(windowDimensions, DAY_CYCLE);
         GameObject sunHalo = SunHalo.create(sun);
         gameObjects().addGameObject(sunHalo, Layer.BACKGROUND + 1);
         gameObjects().addGameObject(sun, Layer.BACKGROUND + 2);
     }
 
-    /** creates the sky object and adds it to the back layer  */
+    /**
+     * creates the sky object and adds it to the back layer
+     */
     private void createSky(Vector2 windowDimensions) {
         GameObject sky = Sky.create(windowDimensions);
         int skyLayer = Layer.BACKGROUND;
         gameObjects().addGameObject(sky, skyLayer);
     }
 
-    /** Creates the night darkness and adds it to the foreground layer */
+    /**
+     * Creates the night darkness and adds it to the foreground layer
+     */
     private void createNight(Vector2 windowDimensions) {
         GameObject nightOverlay = Night.create(windowDimensions, DAY_CYCLE);
         // we chose FOREGROUND bec it will also affect the ground and avatar
         int nightLayer = Layer.FOREGROUND;
         gameObjects().addGameObject(nightOverlay, nightLayer);
     }
-    /** Executes frame state updates
-     * @param deltaTime  delta frame timeframe modifier scalar value*/
+
+    /**
+     * Executes frame state updates
+     *
+     * @param deltaTime delta frame timeframe modifier scalar value
+     */
     @Override
     public void update(float deltaTime) {
         super.update(deltaTime);
@@ -193,8 +227,12 @@ public class PepseGameManager extends GameManager {
             removeMiniWorlds();
         }
     }
-    /** main to initialize the game
-     * @param args System environment parameter */
+
+    /**
+     * main to initialize the game
+     *
+     * @param args System environment parameter
+     */
     public static void main(String[] args) {
         new PepseGameManager().run();
     }
