@@ -4,8 +4,9 @@ import danogl.gui.UserInputListener;
 import danogl.gui.rendering.AnimationRenderable;
 import java.awt.event.KeyEvent;
 
-/**
+/** represents the run state.
  * in this state the avatar is on ground!!
+ * @author Diana Basil and Meital Lubarski
  */
 public class RunState implements State{
     private static final float MIN_JUMP_ENERGY = 20f;

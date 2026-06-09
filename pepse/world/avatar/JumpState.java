@@ -6,7 +6,8 @@ import danogl.gui.rendering.AnimationRenderable;
 import java.awt.event.KeyEvent;
 
 /**
- * Represents the Jump state. The avatar is NOT on ground!! (jumping or fall)
+ * represents the Jump state. The avatar is NOT on ground!! (jumping or fall)
+ * @author Diana Basil and Meital Lubarski
  */
 public class JumpState implements State{
     private static final float DOUBLE_JUMP_ENERGY = 50f;
@@ -17,6 +18,11 @@ public class JumpState implements State{
     public JumpState(AnimationRenderable animation) {
         this.animation = animation;
     }
+
+    /** checks keyboard to see if we should leave the jump state
+     * @param avatar The avatar instance
+     * @param inputListener The input channel reading keyboard
+     */
     @Override
     public void handle(Avatar avatar, UserInputListener inputListener) {
         if (Math.abs(avatar.getVelocity().y()) < 1.0f) {

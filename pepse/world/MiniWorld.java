@@ -8,6 +8,7 @@ import java.util.List;
 
 /** responsible for a single world (1 from infinite world) in a coords range
  * encapsulates this world game objects (responsible to add them and delete them)
+ * @author Diana Basil and Meital Lubarski
  */
 public class MiniWorld {
     private final float minX;
