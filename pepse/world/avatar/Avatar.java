@@ -10,7 +10,7 @@ import java.util.List;
 
 /** acts as a publisher in the Observer Design Pattern for energy updates
  * The Avatar maintains a list of EnergyObservers and notifies them
- */
+ *@author Diana Basil and Meital Lubarski */
 public class Avatar extends GameObject {
     public static final float AVATAR_H = 50f;
 

@@ -5,6 +5,7 @@ import danogl.gui.UserInputListener;
 /** state interface encapsulating behavior according to state of avatar
  * State Design Pattern is used bec the state needs to change its behavior dynamically
  * at runtime depending on its internal state
+ * @author Diana Basil and Meital Lubarski
  */
 public interface State {
     /** responsible for state transitions (that happening from keyboard)

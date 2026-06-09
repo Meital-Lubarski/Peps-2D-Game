@@ -6,7 +6,7 @@ import java.awt.event.KeyEvent;
 
 /** represents Idle State using the State Design Pattern.
  * when the avatar is idle it is always on ground!!
- * @author di **/
+ * @author Diana Basil and Meital Lubarski **/
 
 public class IdleState implements State{
     private static final float MIN_JUMP_ENERGY = 20f;

@@ -4,7 +4,7 @@ import danogl.gui.rendering.TextRenderable;
 import danogl.util.Vector2;
 
 /** responsible for the number shown which is the current energy of the avatar
- * */
+ * @author Diana Basil and Meital Lubarski * */
 public class EnergyNum extends GameObject implements EnergyObserver {
     private final TextRenderable textRenderable;
     private static final String INIT_ENERGY = "100";
